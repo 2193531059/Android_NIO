@@ -1,5 +1,7 @@
 package com.example.niodemo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
@@ -14,9 +16,12 @@ import java.util.Set;
 public class MyReadThread extends Thread {
     private static final String TAG = "MyReadThread";
     Selector selector;
+    private Context context;
 
-    public MyReadThread(Selector selector) {
+    public MyReadThread(Selector selector, Context context) {
+
         this.selector = selector;
+        this.context = context;
     }
 
     @Override
@@ -42,7 +47,10 @@ public class MyReadThread extends Thread {
                             stringBuffer .append(Charset.forName("UTF-8").decode(buffer));
                             buffer.clear();
                         }
-                        Log.e(TAG, "run: ----" + stringBuffer.toString());
+                        Intent intent = new Intent("GET_SERVER_CONTENT");
+                        intent.putExtra("content", stringBuffer.toString());
+                        context.sendBroadcast(intent);
+//                        Log.e(TAG, "run: ----" + stringBuffer.toString());
                     }
                     iterator.remove();
                 }
